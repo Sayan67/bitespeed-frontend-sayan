@@ -7,6 +7,7 @@ import {
   useNodesState,
   useEdgesState,
   useReactFlow,
+  type IsValidConnection,
 } from 'reactflow';
 import FlowCanvas from './FlowCanvas';
 import NodesPanel from './panels/NodesPanel';
@@ -24,8 +25,28 @@ const FlowBuilder: React.FC = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges]
+    (params: Connection) => {
+      // Only allow connection if source handle doesn't already have an outgoing edge
+      const sourceHasEdge = edges.some(edge => edge.source === params.source);
+      if (!sourceHasEdge) {
+        setEdges((eds) => addEdge(params, eds));
+      }
+    },
+    [edges, setEdges]
+  );
+
+  const isValidConnection: IsValidConnection = useCallback(
+    (connection) => {
+      // Prevent self-connections
+      if (connection.source === connection.target) {
+        return false;
+      }
+
+      // Check if source already has an outgoing edge
+      const sourceHasEdge = edges.some(edge => edge.source === connection.source);
+      return !sourceHasEdge;
+    },
+    [edges]
   );
 
   const onNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
@@ -99,6 +120,7 @@ const FlowBuilder: React.FC = () => {
           onConnect={onConnect}
           onNodeClick={onNodeClick}
           onPaneClick={onPaneClick}
+          isValidConnection={isValidConnection}
         />
       </div>
       {selectedNode ? (

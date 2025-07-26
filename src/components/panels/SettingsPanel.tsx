@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import type { Node } from "reactflow";
 
 interface TextNodeData {
@@ -17,6 +17,13 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   onClose,
 }) => {
   const [message, setMessage] = useState(selectedNode?.data?.message || "");
+
+  // Update message state when selectedNode changes
+  useEffect(() => {
+    if (selectedNode?.data?.message !== undefined) {
+      setMessage(selectedNode.data.message);
+    }
+  }, [selectedNode]);
 
   const handleMessageChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -75,7 +82,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             onChange={handleMessageChange}
             placeholder="Enter message text..."
             className="w-full p-2 border border-gray-300 rounded-md text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            rows={45}
+            rows={5}
           />
         </div>
 
