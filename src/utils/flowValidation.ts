@@ -12,7 +12,10 @@ export interface ValidationResult {
 }
 
 /**
- * Validates the chatbot flow
+ * Validates the chatbot flow with updated rules:
+ * - Multiple starting points allowed
+ * - Each node can have only one outgoing edge
+ * - All nodes must be reachable from at least one starting point
  */
 export function validateFlow(nodes: Node[], edges: Edge[]): ValidationResult {
   const errors: ValidationError[] = [];
@@ -31,32 +34,17 @@ export function validateFlow(nodes: Node[], edges: Edge[]): ValidationResult {
     return { isValid: true, errors: [] };
   }
 
-  // Rule 3: Check for empty target handles (nodes without incoming connections)
+  // Rule 3: Check for starting nodes (nodes without incoming connections)
   const nodesWithoutTargets = nodes.filter((node) => {
     return !edges.some((edge) => edge.target === node.id);
   });
 
-  // Rule 4: If more than one node exists, only one node should have empty target handles
+  // Rule 4: Flow must have at least one starting node (but can have multiple)
   if (nodesWithoutTargets.length === 0) {
     errors.push({
       type: "error",
       message:
-        "Flow must have a starting node (node without incoming connections)",
-    });
-  } else if (nodesWithoutTargets.length > 1) {
-    errors.push({
-      type: "error",
-      message:
-        "Flow can only have one starting node (multiple nodes have no incoming connections)",
-    });
-
-    // Add specific error for each orphaned node
-    nodesWithoutTargets.forEach((node) => {
-      errors.push({
-        type: "warning",
-        message: `Node "${node.data?.message || node.id}" has no incoming connections`,
-        nodeId: node.id,
-      });
+        "Flow must have at least one starting node (node without incoming connections)",
     });
   }
 
@@ -73,18 +61,25 @@ export function validateFlow(nodes: Node[], edges: Edge[]): ValidationResult {
     });
   });
 
-  // Rule 6: Check for disconnected components (unreachable nodes)
-  const startingNodes = nodesWithoutTargets;
-  if (startingNodes.length === 1) {
-    const reachableNodes = getReachableNodes(startingNodes[0], nodes, edges);
+  // Rule 6: Check for disconnected components (unreachable nodes from any starting point)
+  if (nodesWithoutTargets.length > 0) {
+    const allReachableNodes = new Set<string>();
+    
+    // Get all nodes reachable from any starting point
+    nodesWithoutTargets.forEach(startingNode => {
+      const reachableFromThisStart = getReachableNodes(startingNode, nodes, edges);
+      reachableFromThisStart.forEach(nodeId => allReachableNodes.add(nodeId));
+    });
+    
+    // Find nodes that are not reachable from any starting point
     const unreachableNodes = nodes.filter(
-      (node) => !reachableNodes.has(node.id),
+      (node) => !allReachableNodes.has(node.id),
     );
 
     unreachableNodes.forEach((node) => {
       errors.push({
         type: "error",
-        message: `Node "${node.data?.message || node.id}" is not reachable from the starting node`,
+        message: `Node "${node.data?.message || node.id}" is not reachable from any starting node`,
         nodeId: node.id,
       });
     });
