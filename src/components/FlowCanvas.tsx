@@ -20,6 +20,8 @@ interface FlowCanvasProps {
   onNodesChange: (changes: NodeChange[]) => void;
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (connection: Connection) => void;
+  onNodeClick?: (event: React.MouseEvent, node: Node) => void;
+  onPaneClick?: () => void;
 }
 
 const FlowCanvas: React.FC<FlowCanvasProps> = ({
@@ -28,6 +30,8 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
   onNodesChange,
   onEdgesChange,
   onConnect,
+  onNodeClick,
+  onPaneClick,
 }) => {
   return (
     <div className="w-full h-full">
@@ -37,6 +41,8 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeClick={onNodeClick}
+        onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
         defaultEdgeOptions={{
           type: "smooth",
