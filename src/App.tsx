@@ -1,4 +1,5 @@
 import './App.css'
+import FlowBuilder from './components/FlowBuilder'
 
 function App() {
   return (
@@ -8,9 +9,7 @@ function App() {
       </header>
       <main className="flex flex-1 overflow-hidden">
         <div className="flex-1 bg-gray-100 relative">
-          <div className="flex items-center justify-center h-full text-lg text-gray-600">
-            Flow Canvas Coming Soon...
-          </div>
+          <FlowBuilder />
         </div>
       </main>
     </div>
