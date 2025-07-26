@@ -11,6 +11,7 @@ import {
   type Connection,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import { nodeTypes } from './nodes/nodeTypes';
 
 interface FlowCanvasProps {
   nodes: Node[];
@@ -35,6 +36,7 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        nodeTypes={nodeTypes}
         fitView
         className="bg-gray-50"
       >
