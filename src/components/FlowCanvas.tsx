@@ -1,17 +1,18 @@
-import React from 'react';
+import React from "react";
 import {
   ReactFlow,
   Background,
   Controls,
   MiniMap,
+  MarkerType,
   type Node,
   type Edge,
   type NodeChange,
   type EdgeChange,
   type Connection,
-} from 'reactflow';
-import 'reactflow/dist/style.css';
-import { nodeTypes } from './nodes/nodeTypes';
+} from "reactflow";
+import "reactflow/dist/style.css";
+import { nodeTypes } from "./nodes/nodeTypes";
 
 interface FlowCanvasProps {
   nodes: Node[];
@@ -37,6 +38,19 @@ const FlowCanvas: React.FC<FlowCanvasProps> = ({
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
+        defaultEdgeOptions={{
+          type: "smooth",
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            width: 20,
+            height: 20,
+            color: "#999",
+          },
+          style: {
+            stroke: "#999",
+            strokeWidth: 2,
+          },
+        }}
         fitView
         className="bg-gray-50"
       >

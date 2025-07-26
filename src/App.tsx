@@ -1,4 +1,5 @@
 import './App.css'
+import { ReactFlowProvider } from 'reactflow'
 import FlowBuilder from './components/FlowBuilder'
 
 function App() {
@@ -9,7 +10,9 @@ function App() {
       </header>
       <main className="flex flex-1 overflow-hidden">
         <div className="flex-1 bg-gray-100 relative">
-          <FlowBuilder />
+          <ReactFlowProvider>
+            <FlowBuilder />
+          </ReactFlowProvider>
         </div>
       </main>
     </div>

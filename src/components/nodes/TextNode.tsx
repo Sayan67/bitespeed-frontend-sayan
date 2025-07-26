@@ -20,7 +20,7 @@ const TextNode: React.FC<TextNodeProps> = ({ data, selected }) => {
     >
       <Handle
         type="target"
-        position={Position.Top}
+        position={Position.Left}
         className="w-3 h-3 bg-gray-400"
       />
       
@@ -36,7 +36,7 @@ const TextNode: React.FC<TextNodeProps> = ({ data, selected }) => {
 
       <Handle
         type="source"
-        position={Position.Bottom}
+        position={Position.Right}
         className="w-3 h-3 bg-gray-400"
       />
     </div>
