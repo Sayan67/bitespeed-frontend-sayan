@@ -7,20 +7,24 @@ const NodesPanel: React.FC = () => {
   };
 
   return (
-    <div className="w-64 bg-white border-l border-gray-200 p-4">
-      <h3 className="text-sm font-semibold text-gray-700 mb-4">Nodes Panel</h3>
+    <div className="w-64 bg-white p-4">
+      <h3 className="text-sm font-semibold text-gray-700 mb-4">Available Nodes</h3>
       
-      <div className="space-y-2">
+      <div className="space-y-3">
         <div
-          className="flex items-center gap-3 p-3 bg-white border-2 border-blue-500 rounded-lg cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow"
+          className="group flex items-center gap-3 p-3 bg-white border-2 border-blue-500 rounded-lg cursor-grab active:cursor-grabbing hover:shadow-lg hover:border-blue-600 transition-all duration-200 transform hover:scale-105"
           draggable
           onDragStart={(event) => onDragStart(event, 'textNode')}
         >
-          <div className="w-4 h-4 bg-green-500 rounded-full flex-shrink-0"></div>
+          <div className="w-4 h-4 bg-green-500 rounded-full flex-shrink-0 group-hover:bg-green-600 transition-colors"></div>
           <div>
-            <div className="text-sm font-medium text-gray-800">Message</div>
-            <div className="text-xs text-gray-500">Send a text message</div>
+            <div className="text-sm font-medium text-gray-800 group-hover:text-gray-900">Message</div>
+            <div className="text-xs text-gray-500 group-hover:text-gray-600">Send a text message</div>
           </div>
+        </div>
+        
+        <div className="text-xs text-gray-400 pt-2 border-t border-gray-100">
+          Drag and drop nodes onto the canvas to build your chatbot flow
         </div>
       </div>
     </div>
