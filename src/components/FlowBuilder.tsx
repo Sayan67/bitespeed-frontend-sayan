@@ -12,6 +12,8 @@ import {
 import FlowCanvas from './FlowCanvas';
 import NodesPanel from './panels/NodesPanel';
 import SettingsPanel from './panels/SettingsPanel';
+import ValidationPanel from './panels/ValidationPanel';
+import { useFlowValidation } from '../hooks/useFlowValidation';
 import { v4 as uuidv4 } from 'uuid';
 
 const initialNodes: Node[] = [];
@@ -23,6 +25,9 @@ const FlowBuilder: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const { screenToFlowPosition } = useReactFlow();
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
+  
+  // Flow validation
+  const validation = useFlowValidation(nodes, edges);
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -72,6 +77,13 @@ const FlowBuilder: React.FC = () => {
     setSelectedNode(null);
   }, []);
 
+  const onNodeHighlight = useCallback((nodeId: string) => {
+    const node = nodes.find(n => n.id === nodeId);
+    if (node) {
+      setSelectedNode(node);
+    }
+  }, [nodes]);
+
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
@@ -105,33 +117,44 @@ const FlowBuilder: React.FC = () => {
   );
 
   return (
-    <div className="flex w-full h-full">
-      <div 
-        className="flex-1" 
-        ref={reactFlowWrapper}
-        onDragOver={onDragOver}
-        onDrop={onDrop}
-      >
-        <FlowCanvas
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={onNodeClick}
-          onPaneClick={onPaneClick}
-          isValidConnection={isValidConnection}
+    <div className="flex flex-col w-full h-full">
+      {/* Validation Panel */}
+      <div className="p-3 bg-gray-50 border-b border-gray-200">
+        <ValidationPanel 
+          errors={validation.errors} 
+          onNodeHighlight={onNodeHighlight}
         />
       </div>
-      {selectedNode ? (
-        <SettingsPanel
-          selectedNode={selectedNode}
-          onNodeUpdate={onNodeUpdate}
-          onClose={onCloseSettings}
-        />
-      ) : (
-        <NodesPanel />
-      )}
+
+      {/* Main Flow Area */}
+      <div className="flex flex-1 overflow-hidden">
+        <div 
+          className="flex-1" 
+          ref={reactFlowWrapper}
+          onDragOver={onDragOver}
+          onDrop={onDrop}
+        >
+          <FlowCanvas
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeClick={onNodeClick}
+            onPaneClick={onPaneClick}
+            isValidConnection={isValidConnection}
+          />
+        </div>
+        {selectedNode ? (
+          <SettingsPanel
+            selectedNode={selectedNode}
+            onNodeUpdate={onNodeUpdate}
+            onClose={onCloseSettings}
+          />
+        ) : (
+          <NodesPanel />
+        )}
+      </div>
     </div>
   );
 };
